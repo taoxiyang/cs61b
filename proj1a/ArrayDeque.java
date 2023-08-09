@@ -46,19 +46,8 @@ public class ArrayDeque<T>{
         size += 1;
     }
 
-<<<<<<< HEAD
     private void resize(int newSize){
         T[] newItems = (T[]) new Object[newSize];
-=======
-<<<<<<< HEAD
-    private void resize(int newSize){
-        T[] newItems = (T[]) new Object[newSize];
-=======
-    private void resize(int size){
-        T[] newItems = (T[]) new Object[size];
-
->>>>>>> 11ce65fbff4d2b8843b6114d09a5b9bb6e1c2a50
->>>>>>> 1543d12421eb86b2d4d2e369f8803f82c0fbaec5
         if(startIndex + size <= items.length){
             System.arraycopy(items,startIndex,newItems,0,size);
         }else{
@@ -66,14 +55,7 @@ public class ArrayDeque<T>{
             System.arraycopy(items,startIndex,newItems,0,firstHalf);
             System.arraycopy(items,0,newItems,firstHalf,size-firstHalf);
         }
-<<<<<<< HEAD
         startIndex = 0;
-=======
-<<<<<<< HEAD
-        startIndex = 0;
-=======
->>>>>>> 11ce65fbff4d2b8843b6114d09a5b9bb6e1c2a50
->>>>>>> 1543d12421eb86b2d4d2e369f8803f82c0fbaec5
         this.items = newItems;
     }
 
@@ -138,41 +120,18 @@ public class ArrayDeque<T>{
     }
 
 
-<<<<<<< HEAD
-    private T getLast() {
-=======
-<<<<<<< HEAD
-    private T getLast() {
-=======
     public T getLast() {
->>>>>>> 11ce65fbff4d2b8843b6114d09a5b9bb6e1c2a50
->>>>>>> 1543d12421eb86b2d4d2e369f8803f82c0fbaec5
+
         return get(size -1);
     }
 
 
-<<<<<<< HEAD
-    private T getFirst() {
-=======
-<<<<<<< HEAD
-    private T getFirst() {
-=======
     public T getFirst() {
->>>>>>> 11ce65fbff4d2b8843b6114d09a5b9bb6e1c2a50
->>>>>>> 1543d12421eb86b2d4d2e369f8803f82c0fbaec5
         return get(0);
     }
 
 
-<<<<<<< HEAD
-    private T getRecursive(int index) {
-=======
-<<<<<<< HEAD
-    private T getRecursive(int index) {
-=======
     public T getRecursive(int index) {
->>>>>>> 11ce65fbff4d2b8843b6114d09a5b9bb6e1c2a50
->>>>>>> 1543d12421eb86b2d4d2e369f8803f82c0fbaec5
         return null;
     }
 }
