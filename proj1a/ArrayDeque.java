@@ -46,9 +46,8 @@ public class ArrayDeque<T>{
         size += 1;
     }
 
-    private void resize(int size){
-        T[] newItems = (T[]) new Object[size];
-
+    private void resize(int newSize){
+        T[] newItems = (T[]) new Object[newSize];
         if(startIndex + size <= items.length){
             System.arraycopy(items,startIndex,newItems,0,size);
         }else{
@@ -56,6 +55,7 @@ public class ArrayDeque<T>{
             System.arraycopy(items,startIndex,newItems,0,firstHalf);
             System.arraycopy(items,0,newItems,firstHalf,size-firstHalf);
         }
+        startIndex = 0;
         this.items = newItems;
     }
 
