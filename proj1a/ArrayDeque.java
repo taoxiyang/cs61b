@@ -120,17 +120,17 @@ public class ArrayDeque<T>{
     }
 
 
-    public T getLast() {
+    private T getLast() {
         return get(size -1);
     }
 
 
-    public T getFirst() {
+    private T getFirst() {
         return get(0);
     }
 
 
-    public T getRecursive(int index) {
+    private T getRecursive(int index) {
         return null;
     }
 }

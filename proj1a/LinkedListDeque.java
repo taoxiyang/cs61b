@@ -90,7 +90,7 @@ public class LinkedListDeque<T>{
     }
 
 
-    public T getLast() {
+    private T getLast() {
         if(size == 0){
             return null;
         }
@@ -98,7 +98,7 @@ public class LinkedListDeque<T>{
     }
 
 
-    public T getFirst() {
+    private T getFirst() {
         if(size == 0){
             return null;
         }
