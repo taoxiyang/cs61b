@@ -74,7 +74,10 @@ public class LinkedListDeque<T>{
         T t = getLast();
         sentinel.prev = sentinel.prev.prev;
         sentinel.prev.next = sentinel;
+<<<<<<< HEAD
         size -= 1;
+=======
+>>>>>>> 11ce65fbff4d2b8843b6114d09a5b9bb6e1c2a50
         return t;
     }
 
@@ -91,7 +94,11 @@ public class LinkedListDeque<T>{
     }
 
 
+<<<<<<< HEAD
     private T getLast() {
+=======
+    public T getLast() {
+>>>>>>> 11ce65fbff4d2b8843b6114d09a5b9bb6e1c2a50
         if(size == 0){
             return null;
         }
@@ -99,7 +106,11 @@ public class LinkedListDeque<T>{
     }
 
 
+<<<<<<< HEAD
     private T getFirst() {
+=======
+    public T getFirst() {
+>>>>>>> 11ce65fbff4d2b8843b6114d09a5b9bb6e1c2a50
         if(size == 0){
             return null;
         }
