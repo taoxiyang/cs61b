@@ -48,6 +48,7 @@ public class ArrayDeque<T>{
 
     private void resize(int newSize){
         T[] newItems = (T[]) new Object[newSize];
+
         if(startIndex + size <= items.length){
             System.arraycopy(items,startIndex,newItems,0,size);
         }else{
@@ -120,18 +121,18 @@ public class ArrayDeque<T>{
     }
 
 
-    public T getLast() {
+    private T getLast() {
 
         return get(size -1);
     }
 
 
-    public T getFirst() {
+    private T getFirst() {
         return get(0);
     }
 
 
-    public T getRecursive(int index) {
+    private T getRecursive(int index) {
         return null;
     }
 }
