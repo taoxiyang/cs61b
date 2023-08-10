@@ -103,8 +103,8 @@ public class ArrayDeque<T>{
     }
 
     private void tryShrink(){
-        if(size >= 16 && size <= (items.length >> 2)){
-            resize(size >> 1);
+        if(items.length >= 16 && size <= (items.length >> 2)){
+            resize(items.length >> 1);
         }
     }
 
