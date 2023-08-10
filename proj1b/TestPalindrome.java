@@ -34,14 +34,13 @@ public class TestPalindrome {
         CharacterComparator offByOne = new OffByOne();
         assertTrue(palindrome.isPalindrome("a",offByOne));
         assertTrue(palindrome.isPalindrome("",offByOne));
-        assertTrue(palindrome.isPalindrome("caac",offByOne));
-        assertTrue(palindrome.isPalindrome("CaAc",offByOne));
-        assertTrue(palindrome.isPalindrome("cac",offByOne));
-        assertTrue(palindrome.isPalindrome("aaabbbbbaaa",offByOne));
-        assertTrue(palindrome.isPalindrome("Cac",offByOne));
+        assertFalse(palindrome.isPalindrome("caac",offByOne));
+        assertFalse(palindrome.isPalindrome("CaAc",offByOne));
+        assertFalse(palindrome.isPalindrome("cac",offByOne));
+        assertFalse(palindrome.isPalindrome("aaabbbbbaaa",offByOne));
+        assertFalse(palindrome.isPalindrome("Cac",offByOne));
         assertFalse(palindrome.isPalindrome("caca",offByOne));
         assertFalse(palindrome.isPalindrome("cat",offByOne));
-
         assertTrue(palindrome.isPalindrome("flake",offByOne));
     }
 
