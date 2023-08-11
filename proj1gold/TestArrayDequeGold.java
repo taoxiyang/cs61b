@@ -15,7 +15,7 @@ public class TestArrayDequeGold {
         StudentArrayDeque<Integer> sdeque = new StudentArrayDeque();
         ArrayDequeSolution<Integer> adeque = new ArrayDequeSolution();
 
-        StringBuffer operations = new StringBuffer("operations:\n");
+        StringBuffer operations = new StringBuffer("");
 
         for(int k = 0; k < 100000; k++){
             Integer i = StdRandom.uniform(1000);
