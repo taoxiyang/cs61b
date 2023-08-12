@@ -103,6 +103,11 @@ public class ArrayRingBufferTest {
         for(Integer integer : arrayRingBuffer){
             Assert.assertEquals(integer,new Integer(++i));
         }
-        Assert.assertTrue(arrayRingBuffer.isEmpty());
+        Assert.assertTrue(arrayRingBuffer.isFull());
+        i = 0;
+        for(Integer integer : arrayRingBuffer){
+            Assert.assertEquals(integer,new Integer(++i));
+        }
+        Assert.assertTrue(arrayRingBuffer.isFull());
     }
 }

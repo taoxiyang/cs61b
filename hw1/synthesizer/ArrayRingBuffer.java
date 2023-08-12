@@ -76,14 +76,23 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
 
     private class MyIterator implements Iterator<T>{
 
+        private int index = first;
+
         @Override
         public boolean hasNext() {
-            return !isEmpty();
+            if(first <= last){
+                return index >= first && index <= last;
+            }
+            return index >= first || index <= last;
         }
 
         @Override
         public T next() {
-            return dequeue();
+            T t = rb[index];
+            index++;
+            if(index >= capacity)
+                index = 0;
+            return t;
         }
     }
 }
