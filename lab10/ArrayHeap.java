@@ -1,4 +1,8 @@
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 /**
@@ -10,6 +14,8 @@ import static org.junit.Assert.*;
 public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     private Node[] contents;
     private int size;
+
+    private Map<T, Integer> map = new HashMap<>();
 
     public ArrayHeap() {
         contents = new ArrayHeap.Node[16];
@@ -28,7 +34,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int leftIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return 2 * i;
     }
 
     /**
@@ -36,7 +42,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int rightIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return 2 * i + 1;
     }
 
     /**
@@ -44,7 +50,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int parentIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return  i / 2;
     }
 
     /**
@@ -78,6 +84,8 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         Node node2 = getNode(index2);
         contents[index1] = node2;
         contents[index2] = node1;
+        map.put(node2.item(),index1);
+        map.put(node1.item(),index2);
     }
 
 
@@ -107,6 +115,12 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
+        int parentIdx = parentIndex(index);
+        while (min(parentIdx, index) == index && inBounds(parentIdx)){
+            swap(index, parentIdx);
+            index = parentIdx;
+            parentIdx = parentIndex(index);
+        }
         /** TODO: Your code here. */
         return;
     }
@@ -118,6 +132,12 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
+        int childIdx = min(leftIndex(index), rightIndex(index));
+        while (min(childIdx, index) == childIdx && inBounds(childIdx)){
+            swap(childIdx,index);
+            index = childIdx;
+            childIdx = min(leftIndex(index), rightIndex(index));
+        }
         /** TODO: Your code here. */
         return;
     }
@@ -132,7 +152,10 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         if (size + 1 == contents.length) {
             resize(contents.length * 2);
         }
-
+        Node insertNode =  new Node(item, priority);
+        contents[++size] = insertNode;
+        map.put(insertNode.item(),size);
+        swim(size);
         /* TODO: Your code here! */
     }
 
@@ -143,7 +166,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public T peek() {
         /* TODO: Your code here! */
-        return null;
+        return contents[1].item();
     }
 
     /**
@@ -158,7 +181,15 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public T removeMin() {
         /* TODO: Your code here! */
-        return null;
+        Node min = contents[1];
+        T t = min.item();
+        swap(1,size);
+        size--;
+        map.remove(t);
+        if(size > 1){
+            sink(1);
+        }
+        return t;
     }
 
     /**
@@ -181,6 +212,16 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     @Override
     public void changePriority(T item, double priority) {
         /* TODO: Your code here! */
+        Integer idx = map.get(item);
+        if(idx == null){
+            return;
+        }
+        contents[idx] = new Node(item, priority);
+        if(min(idx,parentIndex(idx)) == idx && idx != 1){
+            swim(idx);
+        }else{
+            sink(idx);
+        }
         return;
     }
 
