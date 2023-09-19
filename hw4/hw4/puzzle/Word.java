@@ -82,9 +82,14 @@ public class Word implements WorldState {
         return neighbs;
     }
 
+    private int estimatedDistanceToGoal = Integer.MIN_VALUE;
+
     @Override
     public int estimatedDistanceToGoal() {
-        return editDistance(this.word, goal);
+        if(estimatedDistanceToGoal == Integer.MIN_VALUE){
+            estimatedDistanceToGoal = editDistance(this.word, goal);
+        }
+        return estimatedDistanceToGoal;
     }
 
     @Override
