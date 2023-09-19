@@ -12,7 +12,7 @@ public class Solver {
 
     private SearchNode stateSeq;
 
-    MinPQ<SearchNode> minPQ = new MinPQ<>();
+    private MinPQ<SearchNode> minPQ = new MinPQ<>();
 
     public Solver(WorldState initial){
         minPQ.insert(new SearchNode(null,0, initial));
@@ -25,7 +25,7 @@ public class Solver {
                     minPQ.insert(new SearchNode(stateSeq, size, neghbor));
                 }
             }
-            System.out.println("minPQ size " + minPQ.size() );
+//            System.out.println("minPQ size " + minPQ.size() );
             if(minPQ.isEmpty()){
                 break;
             }

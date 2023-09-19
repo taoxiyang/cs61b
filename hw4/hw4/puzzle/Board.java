@@ -1,7 +1,6 @@
 package hw4.puzzle;
 import edu.princeton.cs.algs4.Queue;
 
-import java.util.Iterator;
 import java.util.Objects;
 
 import static hw4.puzzle.TestSolver.readBoard;
@@ -35,13 +34,20 @@ public class Board implements WorldState{
         if(y instanceof Board)
             return false;
 
-//        for(int i = 0; i < size(); i++){
-//            for(int j = 0; j < size(); j++){
-//                if(tileAt(i,j) != ((Board) y).tileAt(i,j))
-//                    return false;
-//            }
-//        }
-        return signature == ((Board) y).signature;
+        if(signature != ((Board) y).signature){
+            return false;
+        }
+        return detailEqual((Board) y);
+    }
+
+    private boolean detailEqual(Board o){
+        for(int i = 0; i < size(); i++){
+            for(int j = 0; j < size(); j++){
+                if(tileAt(i,j) != o.tileAt(i,j))
+                    return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -257,24 +263,4 @@ public class Board implements WorldState{
         left, right, up, down
     }
 
-    public static void main(String[] args) {
-
-//        int[][] b = {{8,1,3},{4,0,2},{7,6,5}};
-//        Board board = new Board(b);
-//        System.out.println(board.estimatedDistanceToGoal());
-        Board b = readBoard("input/puzzle50.txt");
-//        System.out.println(b);
-
-        System.out.println(b.goalAtCol(9));
-        System.out.println(b.goalAtRow(9));
-//
-        System.out.println("estimatedDistanceToGoal is " + b.estimatedDistanceToGoal());
-//
-//        System.out.println("---------->");
-//        Iterable<WorldState> ita = b.neighbors();
-//        Iterator<WorldState> it = ita.iterator();
-//        while (it.hasNext()){
-//            System.out.println(it.next());
-//        }
-    }
 }
