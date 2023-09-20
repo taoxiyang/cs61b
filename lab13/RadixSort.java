@@ -30,6 +30,10 @@ public class RadixSort {
         while (index < length){
             sorted = sortHelperLSD(sorted,index++);
         }
+
+        for(int i = 0; i < asciis.length; i++){
+            asciis[i] = sorted[i];
+        }
         return sorted;
     }
 
@@ -86,11 +90,21 @@ public class RadixSort {
     }
 
     public static void main(String[] args) {
-        String[] asciis = {"xa","yb","ta","fc","fx","uvc","b","uz","a","c"};
+//        String[] asciis = {"xa","yb","ta","fc","fx","uvc","b","uz","a","c"};
+
+        String[] asciis = {"11","111","173","103","12","125","172","61","105","18","66","69","173","163","18","3","53","118","183","64","211","5","213","60","242","252"};
         System.out.println(Arrays.toString(asciis));
         System.out.println(Arrays.toString(sort(asciis)));
 //        System.out.println(Arrays.toString(sortHelperLSD(asciis,0)));
 //        System.out.println(Arrays.toString(sortHelperLSD(asciis,1)));
+
+        String[] asciis2 = {"§","ò","§","§","ò","§"};
+        System.out.println(Arrays.toString(asciis2));
+        System.out.println(Arrays.toString(sort(asciis2)));
+        System.out.println(Arrays.toString(asciis2));
+//        char c = '§';
+
+//        System.out.println((int)c);
 
     }
 }
