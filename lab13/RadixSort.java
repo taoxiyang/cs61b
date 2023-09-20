@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Class for doing Radix sort
  *
@@ -17,7 +19,18 @@ public class RadixSort {
      */
     public static String[] sort(String[] asciis) {
         // TODO: Implement LSD Sort
-        return null;
+        int length = 0;
+        for(String s : asciis){
+            if(s.length() > length){
+                length = s.length();
+            }
+        }
+        int index = 0;
+        String[] sorted = sortHelperLSD(asciis,index++);
+        while (index < length){
+            sorted = sortHelperLSD(sorted,index++);
+        }
+        return sorted;
     }
 
     /**
@@ -26,10 +39,37 @@ public class RadixSort {
      * @param asciis Input array of Strings
      * @param index The position to sort the Strings on.
      */
-    private static void sortHelperLSD(String[] asciis, int index) {
+    private static String[] sortHelperLSD(String[] asciis, int index) {
         // Optional LSD helper method for required LSD radix sort
-        return;
+        int[] chars = new int[128];
+        int[] startPostions = new int[128];
+        for(String s : asciis){
+            char c = charAtLSD(s,index);
+            chars[c]++;
+        }
+
+        for(int i = 1; i < 128; i++){
+            startPostions[i] = startPostions[i-1] + chars[i-1];
+        }
+
+        String[] sorted = new String[asciis.length];
+
+        for(String s : asciis){
+            char c = charAtLSD(s,index);
+            sorted[startPostions[c]++] = s;
+        }
+
+        return sorted;
+
     }
+
+    private static char charAtLSD(String ascii, int index){
+        if(index >= ascii.length()){
+            return 0;
+        }
+        return ascii.charAt(ascii.length() - 1 - index);
+    }
+
 
     /**
      * MSD radix sort helper function that recursively calls itself to achieve the sorted array.
@@ -44,5 +84,14 @@ public class RadixSort {
     private static void sortHelperMSD(String[] asciis, int start, int end, int index) {
         // Optional MSD helper method for optional MSD radix sort
         return;
+    }
+
+    public static void main(String[] args) {
+        String[] asciis = {"xa","yb","ta","fc","fx","uvc","b","uz","a","c"};
+        System.out.println(Arrays.toString(asciis));
+        System.out.println(Arrays.toString(sort(asciis)));
+//        System.out.println(Arrays.toString(sortHelperLSD(asciis,0)));
+//        System.out.println(Arrays.toString(sortHelperLSD(asciis,1)));
+
     }
 }
