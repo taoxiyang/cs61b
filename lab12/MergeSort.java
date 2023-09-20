@@ -111,5 +111,33 @@ public class MergeSort {
         students.enqueue("Yes");
         System.out.println(mergeSort(students));
         System.out.println(students);
+
+        Queue<Integer> items = new Queue<Integer>();
+        items.enqueue(0);
+        items.enqueue(0);
+        items.enqueue(2);
+        items.enqueue(1);
+        items.enqueue(3);
+        items.enqueue(4);
+        items.enqueue(4);
+        items.enqueue(4);
+        items.enqueue(13);
+        items.enqueue(15);
+        items.enqueue(19);
+        items.enqueue(6);
+        items.enqueue(15);
+        items.enqueue(5);
+        items.enqueue(12);
+        items.enqueue(11);
+        items.enqueue(19);
+        items.enqueue(11);
+        items.enqueue(8);
+        items.enqueue(5);
+
+        for(int i = 20; i < 10000; i++){
+            items.enqueue(10000-i);
+        }
+        System.out.println(mergeSort(items));
+        System.out.println(items);
     }
 }
