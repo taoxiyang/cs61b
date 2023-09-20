@@ -35,7 +35,13 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
         // Your code here!
-        return null;
+        Queue<Queue<Item>> queues = new Queue<>();
+        while (!items.isEmpty()){
+            Queue<Item> queue = new Queue<>();
+            queue.enqueue(items.dequeue());
+            queues.enqueue(queue);
+        }
+        return queues;
     }
 
     /**
@@ -54,13 +60,56 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
         // Your code here!
-        return null;
+        Queue<Item> items = new Queue<>();
+        while (!q1.isEmpty() || !q2.isEmpty()){
+            items.enqueue(getMin(q1,q2));
+        }
+        return items;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
         // Your code here!
-        return items;
+        int size = items.size();
+        if(size == 1){
+            return items;
+        }
+
+        Queue<Item> left = new Queue<>();
+        Queue<Item> right = new Queue<>();
+        int i = 0;
+//        Iterator<Item> it = items.iterator();
+//        while (i < size / 2){
+//            left.enqueue(it.next());
+//            i++;
+//        }
+//        while (it.hasNext()){
+//            right.enqueue(it.next());
+//        }
+        while (i < size / 2){
+            left.enqueue(items.dequeue());
+            i++;
+        }
+        while (!items.isEmpty()){
+            right.enqueue(items.dequeue());
+        }
+        return mergeSortedQueues(mergeSort(left),mergeSort(right));
+    }
+
+    public static void main(String[] args) {
+        Queue<String> students = new Queue<String>();
+        students.enqueue("Alice");
+        students.enqueue("Teacher");
+        students.enqueue("Vanessa");
+        students.enqueue("Black");
+        students.enqueue("Right");
+        students.enqueue("Students");
+        students.enqueue("Users");
+        students.enqueue("Ethan");
+        students.enqueue("Zebra");
+        students.enqueue("Yes");
+        System.out.println(mergeSort(students));
+        System.out.println(students);
     }
 }
