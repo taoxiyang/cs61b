@@ -74,6 +74,15 @@ public class MergeSort {
         int size = items.size();
         if(size == 1){
             return items;
+        }else if (size == 2){
+            Item a = items.dequeue();
+            Item b = items.dequeue();
+            Item min = a.compareTo(b) > 0 ? b : a;
+            Item max = a.compareTo(b) > 0 ? a : b;
+            Queue<Item> queue = new Queue<>();
+            queue.enqueue(min);
+            queue.enqueue(max);
+            return queue;
         }
 
         Queue<Item> left = new Queue<>();
@@ -98,44 +107,49 @@ public class MergeSort {
     }
 
     public static void main(String[] args) {
-        Queue<String> students = new Queue<String>();
-        students.enqueue("Alice");
-        students.enqueue("Teacher");
-        students.enqueue("Vanessa");
-        students.enqueue("Black");
-        students.enqueue("Right");
-        students.enqueue("Students");
-        students.enqueue("Users");
-        students.enqueue("Ethan");
-        students.enqueue("Zebra");
-        students.enqueue("Yes");
-        System.out.println(mergeSort(students));
-        System.out.println(students);
-
+//        Queue<String> students = new Queue<String>();
+//        students.enqueue("Alice");
+//        students.enqueue("Teacher");
+//        students.enqueue("Vanessa");
+//        students.enqueue("Black");
+//        students.enqueue("Right");
+//        students.enqueue("Students");
+//        students.enqueue("Users");
+//        students.enqueue("Ethan");
+//        students.enqueue("Zebra");
+//        students.enqueue("Yes");
+//        System.out.println(mergeSort(students));
+//        System.out.println(students);
+//
+//        Queue<Integer> items = new Queue<Integer>();
+//        items.enqueue(0);
+//        items.enqueue(0);
+//        items.enqueue(2);
+//        items.enqueue(1);
+//        items.enqueue(3);
+//        items.enqueue(4);
+//        items.enqueue(4);
+//        items.enqueue(4);
+//        items.enqueue(13);
+//        items.enqueue(15);
+//        items.enqueue(19);
+//        items.enqueue(6);
+//        items.enqueue(15);
+//        items.enqueue(5);
+//        items.enqueue(12);
+//        items.enqueue(11);
+//        items.enqueue(19);
+//        items.enqueue(11);
+//        items.enqueue(8);
+//        items.enqueue(5);
+//
+//        for(int i = 20; i < 10000; i++){
+//            items.enqueue(10000-i);
+//        }
         Queue<Integer> items = new Queue<Integer>();
-        items.enqueue(0);
-        items.enqueue(0);
-        items.enqueue(2);
-        items.enqueue(1);
-        items.enqueue(3);
-        items.enqueue(4);
-        items.enqueue(4);
-        items.enqueue(4);
-        items.enqueue(13);
-        items.enqueue(15);
-        items.enqueue(19);
-        items.enqueue(6);
-        items.enqueue(15);
-        items.enqueue(5);
-        items.enqueue(12);
-        items.enqueue(11);
-        items.enqueue(19);
-        items.enqueue(11);
-        items.enqueue(8);
-        items.enqueue(5);
-
-        for(int i = 20; i < 10000; i++){
-            items.enqueue(10000-i);
+        int size = 1000000;
+        for(int i = 0; i < size; i++){
+            items.enqueue(i);
         }
         System.out.println(mergeSort(items));
         System.out.println(items);
