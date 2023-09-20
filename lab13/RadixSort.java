@@ -45,14 +45,14 @@ public class RadixSort {
      */
     private static String[] sortHelperLSD(String[] asciis, int index) {
         // Optional LSD helper method for required LSD radix sort
-        int[] chars = new int[256];
-        int[] startPostions = new int[256];
+        int[] chars = new int[65536];
+        int[] startPostions = new int[65536];
         for(String s : asciis){
             char c = charAtLSD(s,index);
             chars[c]++;
         }
 
-        for(int i = 1; i < 256; i++){
+        for(int i = 1; i < 65536; i++){
             startPostions[i] = startPostions[i-1] + chars[i-1];
         }
 
