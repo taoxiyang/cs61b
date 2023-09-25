@@ -36,6 +36,10 @@ public class MapServer {
      */
     public static final double ROOT_ULLAT = 37.892195547244356, ROOT_ULLON = -122.2998046875,
             ROOT_LRLAT = 37.82280243352756, ROOT_LRLON = -122.2119140625;
+
+    public static final double LON_DELT = 0.0000000001;
+    public static final double LAT_DELT = 0.00000000000001;
+
     /** Each tile is 256x256 pixels. */
     public static final int TILE_SIZE = 256;
     /** HTTP failed response. */

@@ -1,5 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class provides all code necessary to take a query box and produce
@@ -9,8 +11,11 @@ import java.util.Map;
  */
 public class Rasterer {
 
+    private Quadtree quadtree;
+
     public Rasterer() {
-        // YOUR CODE HERE
+        quadtree = new Quadtree(MapServer.ROOT_ULLON,MapServer.ROOT_ULLAT,
+                MapServer.ROOT_LRLON, MapServer.ROOT_LRLAT,0,0,0);
     }
 
     /**
@@ -42,11 +47,145 @@ public class Rasterer {
      *                    forget to set this to true on success! <br>
      */
     public Map<String, Object> getMapRaster(Map<String, Double> params) {
-        // System.out.println(params);
         Map<String, Object> results = new HashMap<>();
-        System.out.println("Since you haven't implemented getMapRaster, nothing is displayed in "
-                           + "your browser.");
+        double lrlon = params.get("lrlon");
+        double ullon = params.get("ullon");
+        double ullat = params.get("ullat");
+        double lrlat = params.get("lrlat");
+        double width = params.get("w");
+
+        int depth = findSuitableDepth(Math.abs(lrlon - ullon) / width);
+
+        double queryLrlon = lrlon;
+        double queryUllon = ullon;
+        double queryUllat = ullat;
+        double queryLrlat = lrlat;
+
+        if(queryUllon < MapServer.ROOT_ULLON){
+            queryUllon = MapServer.ROOT_ULLON + MapServer.LON_DELT;
+        }
+        if(queryUllat > MapServer.ROOT_ULLAT){
+            queryUllat = MapServer.ROOT_ULLAT - MapServer.LAT_DELT;
+        }
+        if(queryLrlon > MapServer.ROOT_LRLON){
+            queryLrlon = MapServer.ROOT_LRLON - MapServer.LON_DELT;
+        }
+        if(queryLrlat < MapServer.ROOT_LRLAT){
+            queryLrlat = MapServer.ROOT_LRLAT + MapServer.LAT_DELT;
+        }
+
+        if(queryUllon >= queryLrlon || queryUllat <= queryLrlat){
+            results.put("query_success",false);
+            results.put("depth",depth);
+            results.put("raster_ul_lon",0);
+            results.put("raster_ul_lat",0);
+            results.put("raster_lr_lon",0);
+            results.put("raster_lr_lat",0);
+            results.put("render_grid",null);
+            return results;
+        }
+
+        String ulPic = quadtree.getPic(depth,queryUllon,queryUllat);
+        int x1 = getX(ulPic);
+        int y1 = getY(ulPic);
+        String lrPic = quadtree.getPic(depth,queryLrlon,queryLrlat);
+        int x2 = getX(lrPic);
+        int y2 = getY(lrPic);
+
+        int rows = y2 - y1 + 1;
+        int cols = x2 - x1 + 1;
+        String[][] render_grid = new String[rows][cols];
+        for(int col = 0; col < cols; col++){
+            for(int row = 0; row < rows; row++){
+                render_grid[row][col] = String.format("d%d_x%d_y%d.png",depth,x1 + col,y1 + row);
+            }
+        }
+
+        results.put("query_success",true);
+        results.put("depth",depth);
+        results.put("raster_ul_lon",getPicUllon(render_grid[0][0]));
+        results.put("raster_ul_lat",getPicUllat(render_grid[0][0]));
+        results.put("raster_lr_lon",getPicLrlon(render_grid[rows-1][cols-1]));
+        results.put("raster_lr_lat",getPicLrlat(render_grid[rows-1][cols-1]));
+        results.put("render_grid",render_grid);
         return results;
+    }
+
+    /**
+     * takes the picture name and returns the upper left longitude
+     * @param picture
+     * @return
+     */
+    private double getPicUllon(String picture){
+        PictureName pictureName = PictureName.fromString(picture);
+        int depth = pictureName.getDepth();
+        int x = pictureName.getX();
+        double delt = (MapServer.ROOT_LRLON - MapServer.ROOT_ULLON) / ( Math.pow(2, depth) );
+        return MapServer.ROOT_ULLON + delt * x;
+    }
+
+    /**
+     * takes the picture name and returns the upper left latitude
+     * @param picture
+     * @return
+     */
+    private double getPicUllat(String picture){
+        PictureName pictureName = PictureName.fromString(picture);
+        int depth = pictureName.getDepth();
+        int y = pictureName.getY();
+        double delt = (MapServer.ROOT_LRLAT - MapServer.ROOT_ULLAT) / ( Math.pow(2, depth) );
+        return MapServer.ROOT_ULLAT + delt * y;
+    }
+
+    /**
+     * takes the picture name and returns the lower right longitude
+     * @param picture
+     * @return
+     */
+    private double getPicLrlon(String picture){
+        PictureName pictureName = PictureName.fromString(picture);
+        int depth = pictureName.getDepth();
+        int x = pictureName.getX();
+        double delt = (MapServer.ROOT_LRLON - MapServer.ROOT_ULLON) / ( Math.pow(2, depth) );
+        return MapServer.ROOT_ULLON + delt * (x + 1);
+    }
+
+    /**
+     * takes the picture name and returns the lower right latitude
+     * @param picture
+     * @return
+     */
+    private double getPicLrlat(String picture){
+        PictureName pictureName = PictureName.fromString(picture);
+        int depth = pictureName.getDepth();
+        int y = pictureName.getY();
+        double delt = (MapServer.ROOT_LRLAT - MapServer.ROOT_ULLAT) / ( Math.pow(2, depth) );
+        return MapServer.ROOT_ULLAT + delt * (y + 1);
+    }
+
+    private int getX(String picture){
+        return PictureName.fromString(picture).getX();
+    }
+
+    private int getY(String picture){
+        return PictureName.fromString(picture).getY();
+    }
+
+    /**
+     * Takes a user query LonDPP and return suitable depth
+     * Have the greatest LonDPP that is less than or equal to the LonDPP of the query box (as zoomed out as possible).
+     * If the requested LonDPP is less than what is available in the data files, use the lowest LonDPP available instead (i.e. depth 7 images).
+     * @param queryLonDPP
+     * @return
+     */
+    private int findSuitableDepth(double queryLonDPP){
+        double dLonDPP = Math.abs(MapServer.ROOT_ULLON - MapServer.ROOT_LRLON) / MapServer.TILE_SIZE;
+        int depth = 0;
+        while (queryLonDPP <  dLonDPP && depth < 7){
+            dLonDPP = dLonDPP / 2;
+            depth++;
+        }
+        return depth;
     }
 
 }
