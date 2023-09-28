@@ -24,6 +24,16 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
+
+//        stlon = -122.25997195302324;
+//        stlat = 37.842982707731025;
+//        destlon = -122.28965562773821;
+//        destlat = 37.83418402502091;
+//
+//        Double d1 = GraphDB.distance(stlon,stlat,g.getNode(93069817).getLongitude(),g.getNode(93069817).getLatitude());
+//        Double d2 = GraphDB.distance(stlon,stlat,g.getNode(266433383).getLongitude(),g.getNode(266433383).getLatitude());
+//
+
         Long start = g.closest(stlon,stlat);
         Long end = g.closest(destlon,destlat);
 
@@ -114,6 +124,11 @@ public class Router {
      * route.
      */
     public static List<NavigationDirection> routeDirections(GraphDB g, List<Long> route) {
+        int a = 1;
+        if(a == 1){
+            return new ArrayList<>();
+        }
+
         List<NavigationDirection> directions = new ArrayList<>();
         NavigationDirection direction = null;
         double preBearing = 0;

@@ -32,7 +32,7 @@ public class GraphDB {
 
     private Map<Long, Node> nodeMap = new HashMap<>();
 
-    private KDTree kdTree;
+    private KDTree<Node> kdTree;
 
     private Map<Node, Set<Way>> nodeWayMap = new HashMap<>();
 
@@ -75,8 +75,16 @@ public class GraphDB {
                 nodeMap.remove(id);
             }
         }
-        kdTree = new KDTree();
+        kdTree = new KDTree(new NodeKDTreeComparator());
+
+        List<Node> nodeList = new ArrayList<>();
         for(Node node : nodeMap.values()){
+            nodeList.add(node);
+        }
+
+//        Collections.shuffle(nodeList);
+
+        for(Node node : nodeList){
             kdTree.insert(node);
         }
     }
@@ -216,7 +224,17 @@ public class GraphDB {
      * @return The id of the node in the graph closest to the target.
      */
     long closest(double longitude, double latitude) {
-        Node best = kdTree.closest(new Node(-1L,longitude,latitude)).item;
+//        Node best = null;
+//        for(Node node : nodeMap.values()){
+//            if(best == null){
+//                best = node;
+//            }else if(distance(longitude,latitude,node.longitude,node.latitude)
+//                    < distance(longitude,latitude,best.longitude,best.latitude)){
+//                best = node;
+//            }
+//
+//        }
+        Node best = kdTree.closest(new Node(-1L,longitude,latitude));
         return best.getId();
     }
 

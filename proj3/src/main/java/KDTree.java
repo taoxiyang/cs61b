@@ -1,126 +1,114 @@
+import java.util.Comparator;
+
 /**
  * @author qiushui
- * @Date 2023/9/27
+ * @Date 2023/9/28
  */
-public class KDTree {
+public class KDTree<T> {
 
-    private KDNode root;
+    private MultiDimensionalComparator<T> comparator;
 
-    public KDTree() {
+    private KDTreeNode<T> root;
+
+    private int size;
+
+    public KDTree(MultiDimensionalComparator<T> comparator){
+        this.comparator = comparator;
     }
 
-    public void insert(GraphDB.Node item){
-        root = insert(item, root, 0);
+    public void insert(T t){
+        root = insert(t, root, root,0);
     }
 
-    private KDNode insert(GraphDB.Node item, KDNode node, int depth){
+    private KDTreeNode insert(T t, KDTreeNode<T> node,KDTreeNode<T> parent, int depth){
         if(node == null){
-            return new KDNode(item);
-        }
-        if(item.getLatitude() == node.item.getLatitude()
-                && item.getLatitude() == node.item.getLatitude()){
-            KDNode newNode = new KDNode(item);
-            newNode.left = node.left;
-            newNode.right = node.right;
+            size++;
+            KDTreeNode newNode = new KDTreeNode(t);
+            newNode.parent = parent;
             return newNode;
         }
-        if(depth % 2 == 0){
-            if(item.getLongitude() < node.item.getLongitude()){
-                node.left = insert(item, node.left, depth+1);
-            }else {
-                node.right = insert(item, node.right, depth+1);
-            }
+        if(t.equals(node.item)){
+            return node;
+        }
+        Comparator<T> cmp = comparator.comparator(depth);
+        if(cmp.compare(t,node.item) < 0){
+            node.left = insert(t, node.left, node,depth+1);
         }else{
-            if(item.getLatitude() < node.item.getLatitude()){
-                node.left = insert(item, node.left, depth+1);
-            }else {
-                node.right = insert(item, node.right, depth+1);
-            }
+            node.right = insert(t, node.right, node,depth+1);
         }
         return node;
     }
 
-    public KDNode closest(GraphDB.Node goal){
-        KDNode node =  closest(goal,root,root, 0);
-        return node;
+    public boolean contains(T t){
+        return contains(t, root,0);
     }
 
-    private KDNode closest(GraphDB.Node goal, KDNode node, KDNode best, int depth){
+    private boolean contains(T t, KDTreeNode<T> node, int depth){
+        if(node == null){
+            return false;
+        }
+        if(t.equals(node.item)){
+            return true;
+        }
+        Comparator<T> cmp = comparator.comparator(depth);
+        if(cmp.compare(t,node.item) < 0){
+            return contains(t, node.left, depth + 1);
+        }else{
+            return contains(t, node.right, depth + 1);
+        }
+    }
+
+    public int size(){
+        return size;
+    }
+
+    public T closest(T goal){
+        if(size == 0){
+            return null;
+        }
+        return closest(goal,root,root,0).item;
+    }
+
+    private KDTreeNode<T> closest(T goal, KDTreeNode<T> node, KDTreeNode<T> best, int depth){
         if(node == null){
             return best;
         }
-        if(distance(goal,node) < distance(goal,best)){
+        if(comparator.distance(goal,node.item) < comparator.distance(goal,best.item)){
             best = node;
         }
-        Side goodSide;
-        Side badSide;
-        if(depth % 2 == 0){
-            if(goal.getLongitude() < node.item.getLongitude()){
-                goodSide = Side.left;
-                badSide = Side.right;
-            }else{
-                goodSide = Side.right;
-                badSide = Side.left;
-            }
-        }else {
-            if(goal.getLatitude() < node.item.getLatitude()){
-                goodSide = Side.left;
-                badSide = Side.right;
-            }else{
-                goodSide = Side.right;
-                badSide = Side.left;
-            }
+
+        KDTreeNode<T> good;
+        KDTreeNode<T> bad;
+        if(comparator.comparator(depth).compare(goal,node.item) < 0){
+            good = node.left;
+            bad = node.right;
+        }else{
+            good = node.right;
+            bad = node.left;
         }
-        KDNode good = goodSide == Side.left ? node.left : node.right;
-        KDNode bad = badSide == Side.left ? node.left : node.right;
-        best = closest(goal,good,best,depth+1);
-        if(canHaveCloser(goal, node, best, depth)){
-            best = closest(goal,bad, best,depth+1);
+        best = closest(goal,good,best,depth + 1);
+        if(canBeBetter(goal, node, best, depth)){
+            best = closest(goal, bad, best,depth + 1);
         }
         return best;
     }
 
-    /**
-     * 有进一步优化空间
-     * @param goal
-     * @param node
-     * @param best
-     * @param depth
-     * @return
-     */
-    private boolean canHaveCloser(GraphDB.Node goal, KDNode node, KDNode best, int depth){
-        double closestDistance = distance(goal,best);
-        double bestDistance = 0;
-        if(depth % 2 == 0){
-            bestDistance = distance(goal,new GraphDB.Node(-1L,node.item.getLongitude(),goal.getLatitude()));
-        }else {
-            bestDistance = distance(goal,new GraphDB.Node(-1L,goal.getLongitude(),node.item.getLatitude()));
-        }
-        return closestDistance > bestDistance;
+    private boolean canBeBetter(T goal, KDTreeNode<T> node, KDTreeNode<T> best, int depth){
+        T buestGuess = comparator.bestGuess(goal,node.item,depth);
+        double bestDistance = comparator.distance(goal,best.item);
+        double guessDistance = comparator.distance(goal,buestGuess);
+        return guessDistance < bestDistance;
     }
 
-    private double distance(GraphDB.Node item, GraphDB.Node node){
-        return GraphDB.distance(item.getLongitude(),item.getLatitude(),
-                node.getLongitude(),node.getLatitude());
-    }
-
-    private double distance(GraphDB.Node item, KDNode node){
-        return distance(item, node.item);
-    }
-
-    enum Side{
-        left, right;
-    }
-
-    class KDNode{
-        final GraphDB.Node item;
-
-        KDNode left;
-
-        KDNode right;
-
-        public KDNode(GraphDB.Node item) {
+    static class KDTreeNode<T>{
+        KDTreeNode parent;
+        KDTreeNode left;
+        KDTreeNode right;
+        final T item;
+        public KDTreeNode(T item) {
             this.item = item;
         }
     }
+
+
 }
