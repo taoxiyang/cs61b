@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,8 +24,86 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        return null; // FIXME
+        Long start = g.closest(stlon,stlat);
+        Long end = g.closest(destlon,destlat);
+
+        MinPQ<SearchNode> pq = new MinPQ<>();
+        SearchNode searchNode = new SearchNode(start,end,0,g,null);
+        while (!searchNode.isDest()){
+            for(Long w : g.adjacent(searchNode.id)){
+                if(searchNode.parent != null && w.longValue() == searchNode.parent.id.longValue()){
+                    //do nothing
+                }else{
+                    double distance = searchNode.distance + g.distance(w,searchNode.id);
+                    SearchNode t = new SearchNode(w,end,distance, g,searchNode);
+                    if(!pq.containes(t)){
+                        pq.insert(t);
+                    }else if(pq.getPriority(t) > t.getPriority()){
+                        pq.update(t);
+                    }
+                }
+            }
+            if(pq.isEmpty()){
+                break;
+            }
+            searchNode = pq.remove();
+        }
+        if(!searchNode.isDest()){
+            throw new IllegalStateException("no path found!");
+        }
+        List<Long> list = new ArrayList<>();
+        while (searchNode != null){
+            list.add(searchNode.id);
+            searchNode = searchNode.parent;
+        }
+        Collections.reverse(list);
+        return list;
     }
+
+    static class SearchNode implements PriorityItem {
+
+        private Long id;
+
+        private Long dest;
+
+        private double distance;
+
+        SearchNode parent;
+
+        private double estimateDistance;
+
+        public SearchNode(Long id, Long dest, double distance,GraphDB g, SearchNode parent) {
+            this.id = id;
+            this.dest = dest;
+            this.distance = distance;
+            this.parent = parent;
+            this.estimateDistance = g.distance(id,dest);
+        }
+
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            SearchNode that = (SearchNode) o;
+            return Objects.equals(id, that.id);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
+        }
+
+        public boolean isDest(){
+            return dest.longValue() == id.longValue();
+        }
+
+        @Override
+        public double getPriority() {
+            return distance + estimateDistance;
+        }
+    }
+
 
     /**
      * Create the list of directions corresponding to a route on the graph.
@@ -37,9 +114,52 @@ public class Router {
      * route.
      */
     public static List<NavigationDirection> routeDirections(GraphDB g, List<Long> route) {
-        return null; // FIXME
+        List<NavigationDirection> directions = new ArrayList<>();
+        NavigationDirection direction = null;
+        double preBearing = 0;
+        for(int i = 1; i < route.size(); i++){
+            long v = route.get(i-1);
+            long w = route.get(i);
+            GraphDB.Way way = g.commonWay(v,w);
+            String wayName = (way.getName() == null || way.getName().isBlank()) ? NavigationDirection.UNKNOWN_ROAD : way.getName();
+            double curBearing = g.bearing(w,v);
+            double bearing = curBearing - preBearing;
+            preBearing = curBearing;
+            double distance = g.distance(v,w);
+            if(direction == null){
+                direction = new NavigationDirection();
+                direction.direction = NavigationDirection.START;
+                direction.distance = distance;
+                direction.way = wayName;
+                directions.add(direction);
+            }else {
+                if(wayName.equals(direction.way)){
+                    direction.distance += distance;
+                }else{
+                    direction = new NavigationDirection();
+                    if(bearing <= 15 && bearing >= -15){
+                        direction.direction = NavigationDirection.STRAIGHT;
+                    }else if(bearing < -15 && bearing >= -30){
+                        direction.direction = NavigationDirection.SLIGHT_LEFT;
+                    }else if(bearing > 15 && bearing <= 30){
+                        direction.direction = NavigationDirection.SLIGHT_RIGHT;
+                    }else if(bearing < -30 && bearing >= -100){
+                        direction.direction = NavigationDirection.LEFT;
+                    }else if(bearing > 30 && bearing <= 100){
+                        direction.direction = NavigationDirection.RIGHT;
+                    }else if(bearing < -100){
+                        direction.direction = NavigationDirection.SHARP_LEFT;
+                    }else if(bearing > 100){
+                        direction.direction = NavigationDirection.SHARP_RIGHT;
+                    }
+                    direction.distance = distance;
+                    direction.way = wayName;
+                    directions.add(direction);
+                }
+            }
+        }
+        return directions;
     }
-
 
     /**
      * Class to represent a navigation direction, which consists of 3 attributes:
