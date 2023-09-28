@@ -56,13 +56,9 @@ public class MinPQ<T extends PriorityItem> {
             System.arraycopy(items,0,newItems,0,items.length);
             items = newItems;
         }
-        if(containes(t)){
-            update(t);
-        }else{
-            items[++size] = t;
-            map.put(t,size);
-            swam(size);
-        }
+        items[++size] = t;
+        map.put(t,size);
+        swam(size);
     }
 
     public int size(){
@@ -82,9 +78,6 @@ public class MinPQ<T extends PriorityItem> {
     }
 
     public void update(T t){
-        if(!containes(t)){
-            throw new IllegalArgumentException("not containes [" + t + "]");
-        }
         int idx = map.get(t);
         items[idx] = t;
         int pIdx = parent(idx);

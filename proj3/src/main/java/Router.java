@@ -30,7 +30,7 @@ public class Router {
 //        destlon = -122.28965562773821;
 //        destlat = 37.83418402502091;
 //
-//        Double d1 = GraphDB.distance(stlon,stlat,g.getNode(93069817).getLongitude(),g.getNode(93069817).getLatitude());
+//        Double d1 = GraphDB.distance(stlon,stat,g.getNode(93069817).getLongitude(),g.getNode(93069817).getLatitude());
 //        Double d2 = GraphDB.distance(stlon,stlat,g.getNode(266433383).getLongitude(),g.getNode(266433383).getLatitude());
 //
 
@@ -113,7 +113,6 @@ public class Router {
             return distance + estimateDistance;
         }
     }
-
 
     /**
      * Create the list of directions corresponding to a route on the graph.
