@@ -67,7 +67,7 @@ public class GraphDB {
      *  we can reasonably assume this since typically roads are connected.
      */
     private void clean() {
-        List<Long> ids = nodeMap.keySet().stream().toList();
+        List<Long> ids = nodeMap.keySet().stream().collect(Collectors.toList());
         for(Long id : ids){
             Node node = nodeMap.get(id);
             if(nodeEdgeMap.get(node).isEmpty()){
