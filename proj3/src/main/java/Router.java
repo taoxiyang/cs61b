@@ -30,7 +30,7 @@ public class Router {
 //        destlon = -122.28965562773821;
 //        destlat = 37.83418402502091;
 //
-//        Double d1 = GraphDB.distance(stlon,stat,g.getNode(93069817).getLongitude(),g.getNode(93069817).getLatitude());
+//        Double d1 = GraphDB.distance(stlon,stlat,g.getNode(93069817).getLongitude(),g.getNode(93069817).getLatitude());
 //        Double d2 = GraphDB.distance(stlon,stlat,g.getNode(266433383).getLongitude(),g.getNode(266433383).getLatitude());
 //
 
@@ -38,6 +38,7 @@ public class Router {
         Long end = g.closest(destlon,destlat);
 
         MinPQ<SearchNode> pq = new MinPQ<>();
+        Map<SearchNode,SearchNode> map = new HashMap<>();
         SearchNode searchNode = new SearchNode(start,end,0,g,null);
         while (!searchNode.isDest()){
             for(Long w : g.adjacent(searchNode.id)){
@@ -46,10 +47,12 @@ public class Router {
                 }else{
                     double distance = searchNode.distance + g.distance(w,searchNode.id);
                     SearchNode t = new SearchNode(w,end,distance, g,searchNode);
-                    if(!pq.containes(t)){
+                    if(!map.containsKey(t)){
                         pq.insert(t);
-                    }else if(pq.getPriority(t) > t.getPriority()){
+                        map.put(t,t);
+                    }else if(map.get(t).getPriority() > t.getPriority()){
                         pq.update(t);
+                        map.put(t,t);
                     }
                 }
             }
@@ -123,10 +126,10 @@ public class Router {
      * route.
      */
     public static List<NavigationDirection> routeDirections(GraphDB g, List<Long> route) {
-        int a = 1;
-        if(a == 1){
-            return new ArrayList<>();
-        }
+//        int a = 1;
+//        if(a == 1){
+//            return new ArrayList<>();
+//        }
 
         List<NavigationDirection> directions = new ArrayList<>();
         NavigationDirection direction = null;

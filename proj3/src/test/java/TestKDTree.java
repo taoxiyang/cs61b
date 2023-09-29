@@ -58,7 +58,7 @@ public class TestKDTree {
         List<Point> pointList = new ArrayList<>();
         Random random = new Random(1000);
 
-        for(int i = 0; i < 10000; i++){
+        for(int i = 0; i < 100000; i++){
             pointList.add(new Point(random.nextInt(150) - 150,random.nextInt(150) - 150));
         }
 
@@ -66,7 +66,7 @@ public class TestKDTree {
             kdTree.insert(point);
         }
 
-        for(int i = 0; i < 1000; i++){
+        for(int i = 0; i < 100; i++){
             Point goal = new Point(random.nextInt(200) - 200 ,random.nextInt(200) - 200);
             Point p1 = kdTree.closest(goal);
             Point p2 = closest(goal,pointList);

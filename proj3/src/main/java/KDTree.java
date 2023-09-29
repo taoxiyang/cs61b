@@ -1,4 +1,5 @@
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author qiushui
@@ -66,10 +67,14 @@ public class KDTree<T> {
         if(size == 0){
             return null;
         }
-        return closest(goal,root,root,0).item;
+        AtomicInteger count = new AtomicInteger(0);
+        T t = closest(goal,root,root,0, count).item;
+//        System.out.println(count);
+        return t;
     }
 
-    private KDTreeNode<T> closest(T goal, KDTreeNode<T> node, KDTreeNode<T> best, int depth){
+    private KDTreeNode<T> closest(T goal, KDTreeNode<T> node, KDTreeNode<T> best, int depth, AtomicInteger count){
+        count.addAndGet(1);
         if(node == null){
             return best;
         }
@@ -86,9 +91,9 @@ public class KDTree<T> {
             good = node.right;
             bad = node.left;
         }
-        best = closest(goal,good,best,depth + 1);
+        best = closest(goal,good,best,depth + 1,count);
         if(canBeBetter(goal, node, best, depth)){
-            best = closest(goal, bad, best,depth + 1);
+            best = closest(goal, bad, best,depth + 1,count);
         }
         return best;
     }

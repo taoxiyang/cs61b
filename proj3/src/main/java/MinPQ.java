@@ -15,7 +15,7 @@ public class MinPQ<T extends PriorityItem> {
     /**
      * 存放元素T在数组中的index位置
      */
-    private Map<T,Integer> map = new HashMap<>();
+//    private Map<T,Integer> map = new HashMap<>();
 
     /**
      * 元素个数
@@ -37,7 +37,7 @@ public class MinPQ<T extends PriorityItem> {
         }
         T t = (T) items[1];
         swap(1,size);
-        map.remove(t);
+//        map.remove(t);
         size--;
         sink(1);
         return t;
@@ -57,7 +57,7 @@ public class MinPQ<T extends PriorityItem> {
             items = newItems;
         }
         items[++size] = t;
-        map.put(t,size);
+//        map.put(t,size);
         swam(size);
     }
 
@@ -66,19 +66,35 @@ public class MinPQ<T extends PriorityItem> {
     }
 
     public double getPriority(T t){
-        Integer idx = map.get(t);
-        if(idx == null || idx <= 0 || idx > size){
-            throw new IllegalArgumentException("not containes [" + t + "]");
-        }
-        return ((T)items[idx]).getPriority();
+//        Integer idx = map.get(t);
+//        if(idx == null || idx <= 0 || idx > size){
+//            throw new IllegalArgumentException("not containes [" + t + "]");
+//        }
+//        return ((T)items[idx]).getPriority();
+        return 0;
     }
 
     public boolean containes(T t){
-        return map.containsKey(t);
+//        return map.containsKey(t);
+        return false;
     }
 
     public void update(T t){
-        int idx = map.get(t);
+//        if(!containes(t)){
+//            throw new IllegalArgumentException("not containes [" + t + "]");
+//        }
+//        int idx = map.get(t);
+        int idx = -1;
+        for(int i = 1; i <= size; i++){
+            if(t.equals(items[i])){
+                idx = i;
+                break;
+            }
+        }
+        if(idx == -1){
+            throw new IllegalArgumentException("not containes [" + t + "]");
+        }
+
         items[idx] = t;
         int pIdx = parent(idx);
         if(pIdx > 0 && t.compareTo((T)items[pIdx]) < 0){
@@ -157,8 +173,8 @@ public class MinPQ<T extends PriorityItem> {
         T t = (T)items[i];
         items[i] = items[j];
         items[j] = t;
-        map.put((T)items[i],i);
-        map.put((T)items[j],j);
+//        map.put((T)items[i],i);
+//        map.put((T)items[j],j);
     }
 
 }

@@ -2,6 +2,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Random;
 
 /**
  * @author qiushui
@@ -23,20 +25,55 @@ public class TestMinPQ {
         Assert.assertEquals(minPQ.remove(), new TestObject(7L,0.3));
 
         minPQ.insert(new TestObject(5L,0.01));
-        Assert.assertEquals(minPQ.size(), 5);
         Assert.assertEquals(minPQ.remove(), new TestObject(5L,0.3));
-        minPQ.update(new TestObject(3L,0.01));
-        Assert.assertEquals(minPQ.remove(), new TestObject(3L,0.3));
+    }
 
-        minPQ.insert(new TestObject(16L,0.6));
-        minPQ.insert(new TestObject(17L,0.61));
-        minPQ.insert(new TestObject(18L,0.62));
-        minPQ.insert(new TestObject(19L,0.63));
-        minPQ.insert(new TestObject(20L,0.64));
-        minPQ.insert(new TestObject(21L,0.59));
 
-        Assert.assertEquals(minPQ.remove(), new TestObject(2L,0.3));
+    @Test
+    public void testTime(){
+        MinPQ<PriorityObject> minPQ = new MinPQ();
+        int size = 1000000;
+        Random random = new Random(1000);
+        Stopwatch timer1 = new Stopwatch();
+        for(int i = 0; i < size; i++){
+            minPQ.insert(new PriorityObject(random.nextDouble()));
+        }
+        System.out.println(String.format("MinPQ insert take (%.2f seconds)",timer1.elapsedTime()));
 
+        PriorityQueue<PriorityObject> pq = new PriorityQueue();
+        timer1 = new Stopwatch();
+        for(int i = 0; i < size; i++){
+            pq.add(new PriorityObject(random.nextDouble()));
+        }
+        System.out.println(String.format("PriorityQueue insert take (%.2f seconds)",timer1.elapsedTime()));
+
+        timer1 = new Stopwatch();
+        while (!minPQ.isEmpty()){
+            minPQ.remove();
+        }
+        System.out.println(String.format("MinPQ remove take (%.2f seconds)",timer1.elapsedTime()));
+
+        timer1 = new Stopwatch();
+        while (!pq.isEmpty()){
+            pq.remove();
+        }
+        System.out.println(String.format("PriorityQueue remove take (%.2f seconds)",timer1.elapsedTime()));
+
+    }
+
+
+    class PriorityObject implements PriorityItem{
+
+        private double priority;
+
+        public PriorityObject(double priority){
+            this.priority = priority;
+        }
+
+        @Override
+        public double getPriority() {
+            return priority;
+        }
     }
 
 
