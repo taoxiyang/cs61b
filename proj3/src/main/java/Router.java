@@ -62,7 +62,8 @@ public class Router {
             searchNode = pq.remove();
         }
         if(!searchNode.isDest()){
-            throw new IllegalStateException("no path found!");
+//            throw new IllegalStateException("no path found!");
+            return new ArrayList<>();
         }
         List<Long> list = new ArrayList<>();
         while (searchNode != null){
