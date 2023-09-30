@@ -135,17 +135,31 @@ public class MinPQ<T extends PriorityItem> {
      * @param idx
      */
     private void sink(int idx){
-        T left = left(idx) > size ? null : (T)items[left(idx)];
-        T right = right(idx) > size ? null : (T)items[right(idx)];
-        if(left == null && right == null){
-            return;
-        }
-        T minChild = left == null ? right : (right == null ? left : (left.compareTo(right) < 0 ? left : right));
-        int minChildIdx = minChild == left ? left(idx) : right(idx);
+        int leftIdx = left(idx);
+        int rightIdx = right(idx);
         T current = (T)items[idx];
-        if(current.compareTo(minChild) > 0){
+        while (leftIdx <= size || rightIdx <= size){
+            T minChild;
+            int minChildIdx;
+            if(leftIdx > size){
+                minChild = (T) items[rightIdx];
+                minChildIdx = rightIdx;
+            }else if(rightIdx > size){
+                minChild = (T) items[leftIdx];
+                minChildIdx = leftIdx;
+            }else {
+                T left = (T) items[leftIdx];
+                T right = (T) items[rightIdx];
+                minChild = left.compareTo(right) < 0 ? left : right;
+                minChildIdx = minChild == left ? leftIdx : rightIdx;
+            }
+            if(current.compareTo(minChild) < 0){
+                break;
+            }
             swap(minChildIdx,idx);
-            sink(minChildIdx);
+            idx = minChildIdx;
+            leftIdx = left(idx);
+            rightIdx = right(idx);
         }
     }
 

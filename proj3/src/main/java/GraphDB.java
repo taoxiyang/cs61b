@@ -36,6 +36,9 @@ public class GraphDB {
 
     private Map<Node, Set<Way>> nodeWayMap = new HashMap<>();
 
+    Map<String, Set<Node>> nameNodeMap = new HashMap<>();
+
+    Trie trie;
 
     public GraphDB(String dbPath) {
         try {
@@ -80,7 +83,18 @@ public class GraphDB {
         List<Node> nodeList = new ArrayList<>();
         for(Node node : nodeMap.values()){
             nodeList.add(node);
+
+            if(node.name != null && !node.name.isBlank()){
+                String neatName = cleanString(node.name);
+                if(nameNodeMap.get(neatName) == null){
+                    nameNodeMap.put(neatName,new HashSet<>());
+                }
+                nameNodeMap.get(neatName).add(node);
+            }
+
         }
+
+        trie = new Trie(nameNodeMap.keySet().toArray(new String[0]));
 
 //        Collections.shuffle(nodeList);
 
